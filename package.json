@@ -1,0 +1,41 @@
+{
+  "name": "shahzaib-khalid-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "preview": "npm run preview --workspace @portfolio/client",
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build",
+    "check:browser": "node scripts/check-foundation.mjs",
+    "dev:client": "npm run dev --workspace @portfolio/client",
+    "dev:server": "npm run dev --workspace @portfolio/server",
+    "test": "npm run test --workspaces --if-present",
+    "check:enhancements": "node scripts/check-enhancements.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^16.4.0",
+    "playwright": "^1.63.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0"
+  }
+}
