@@ -14,20 +14,20 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import { SkillsSection } from './sections/SkillsSection';
 import { StatusSection } from './sections/StatusSection';
 import { WorkLayers } from './sections/WorkLayers';
+import { AladdinBackdrop } from './themes/AladdinBackdrop';
 import { DesertBackdrop } from './themes/DesertBackdrop';
-import { DimensionBackdrop } from './themes/DimensionBackdrop';
 import { PyramidsBackdrop } from './themes/PyramidsBackdrop';
 import { MarsBackdrop } from './themes/MarsBackdrop';
 import { SpaceBackdrop } from './themes/SpaceBackdrop';
 import { SystemsIntro } from './sections/SystemsIntro';
 
-type Theme = 'pyramids' | 'space' | 'mars' | 'dimension' | 'desert';
+type Theme = 'pyramids' | 'space' | 'mars' | 'aladdin' | 'desert';
 
 const backdrops: Record<Theme, () => JSX.Element> = {
   pyramids: PyramidsBackdrop,
   space: SpaceBackdrop,
   mars: MarsBackdrop,
-  dimension: DimensionBackdrop,
+  aladdin: AladdinBackdrop,
   desert: DesertBackdrop,
 };
 
@@ -62,7 +62,7 @@ const overlays: Record<
     theme: 'mars',
     content: [<BlogSection key="b" />, <ProjectsSection key="p" />],
   },
-  credentials: { title: 'Credentials', theme: 'dimension', content: <CredentialsSection /> },
+  credentials: { title: 'Credentials', theme: 'aladdin', content: <CredentialsSection /> },
   status: {
     title: 'Status',
     theme: 'desert',

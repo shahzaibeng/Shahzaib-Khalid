@@ -1,13 +1,10 @@
 import { FiArrowUpRight } from 'react-icons/fi';
 import { posts } from '../../config/content';
-import { accounts } from '../../config/site';
-import { isConfigured } from '../../lib/placeholder';
 import { Section } from './Section';
 
 const dateFormat = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeZone: 'UTC' });
 
 export function BlogSection() {
-  const hashnode = accounts.find(({ id }) => id === 'hashnode')?.href;
   return (
     <Section id="blog" label="Blog" title="Notes from the learning process.">
       {posts.length > 0 ? (
@@ -40,11 +37,6 @@ export function BlogSection() {
             The first articles are being written. They will cover lessons from building full stack
             and AI projects, including this portfolio.
           </p>
-          {isConfigured(hashnode) && (
-            <a href={hashnode} target="_blank" rel="noopener noreferrer" className="text-link mt-5">
-              Follow on Hashnode <FiArrowUpRight aria-hidden="true" />
-            </a>
-          )}
         </div>
       )}
     </Section>

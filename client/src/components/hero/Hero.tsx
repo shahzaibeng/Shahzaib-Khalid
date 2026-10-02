@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FiArrowUpRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { heroHud, heroMetrics } from '../../config/content';
@@ -33,12 +33,26 @@ export function Hero() {
   const nextId = useRef(0);
   // One conversation per visit, so follow-ups like "and Docker?" keep their context.
   const session = useRef(new ChatSession());
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  // The answer is worked out at once, then revealed after a short "thinking" pause of
+  // 1.5–2.5 s that steps through what the assistant is doing.
   const ask = useCallback((question: string) => {
-    setThread((current) => [
-      ...current,
-      { id: nextId.current++, question, answer: session.current.ask(question) },
-    ]);
+    const id = nextId.current++;
+    const answer = session.current.ask(question);
+    const delay = 1500 + Math.random() * 1000;
+    const patch = (change: Partial<Exchange>) =>
+      setThread((current) =>
+        current.map((item) => (item.id === id ? { ...item, ...change } : item)),
+      );
+    setThread((current) => [...current, { id, question, step: 0 }]);
     setDrawerOpen(true);
+    timers.current.push(
+      setTimeout(() => patch({ step: 1 }), delay / 3),
+      setTimeout(() => patch({ step: 2 }), (delay * 2) / 3),
+      setTimeout(() => patch({ answer }), delay),
+    );
   }, []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 

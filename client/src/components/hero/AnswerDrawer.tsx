@@ -5,11 +5,16 @@ import type { FormEvent } from 'react';
 import { FiArrowRight, FiArrowUpRight, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import type { Answer } from '../../lib/assistant';
+import { ThinkingOrb } from './ThinkingOrb';
+import { THINKING_STEPS } from '../../lib/chatbot/thinking';
 
 export interface Exchange {
   id: number;
   question: string;
-  answer: Answer;
+  /** Missing while the assistant is still thinking. */
+  answer?: Answer;
+  /** Index into THINKING_STEPS while thinking. */
+  step: number;
 }
 
 interface AnswerDrawerProps {
@@ -94,60 +99,91 @@ export function AnswerDrawer({ open, thread, onAsk, onClose }: AnswerDrawerProps
             </header>
 
             <div className="drawer-body" aria-live="polite">
-              {thread.map(({ id, question, answer }) => (
+              {thread.map(({ id, question, answer, step }) => (
                 <article key={id} className="exchange">
                   <p className="exchange-question">{question}</p>
-                  <motion.div
-                    className="exchange-answer"
-                    initial="hidden"
-                    animate="shown"
-                    variants={{ shown: { transition: { staggerChildren: 0.06 } } }}
-                  >
-                    <motion.p
-                      className="exchange-summary"
-                      variants={{ hidden: { opacity: 0, y: 6 }, shown: { opacity: 1, y: 0 } }}
-                    >
-                      {answer.summary}
-                    </motion.p>
-                    {answer.points.length > 0 && (
-                      <ul className="exchange-points">
-                        {answer.points.map((point) => (
-                          <motion.li
-                            key={point}
-                            variants={{ hidden: { opacity: 0, y: 6 }, shown: { opacity: 1, y: 0 } }}
-                          >
-                            {point}
-                          </motion.li>
-                        ))}
-                      </ul>
-                    )}
-                    <motion.div
-                      className="exchange-meta"
-                      variants={{ hidden: { opacity: 0 }, shown: { opacity: 1 } }}
-                    >
-                      {answer.sources.length > 0 && (
-                        <span className="exchange-sources">From: {answer.sources.join(' · ')}</span>
-                      )}
-                      {answer.action && (
-                        <button
-                          type="button"
-                          className="exchange-action"
-                          data-symbiote-target
-                          onClick={() => {
-                            onClose();
-                            navigate(`/#${answer.action!.overlay}`);
-                          }}
+                  {!answer ? (
+                    <div className="thinking" role="status">
+                      <ThinkingOrb />
+                      <div>
+                        <motion.p
+                          key={step}
+                          className="thinking-step"
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.25 }}
                         >
-                          {answer.action.label} <FiArrowUpRight aria-hidden="true" />
-                        </button>
+                          {THINKING_STEPS[step]}
+                        </motion.p>
+                        <ol className="thinking-track" aria-hidden="true">
+                          {THINKING_STEPS.map((label, index) => (
+                            <li
+                              key={label}
+                              data-done={index < step || undefined}
+                              data-active={index === step || undefined}
+                            />
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+                  ) : (
+                    <motion.div
+                      className="exchange-answer"
+                      initial="hidden"
+                      animate="shown"
+                      variants={{ shown: { transition: { staggerChildren: 0.06 } } }}
+                    >
+                      <motion.p
+                        className="exchange-summary"
+                        variants={{ hidden: { opacity: 0, y: 6 }, shown: { opacity: 1, y: 0 } }}
+                      >
+                        {answer.summary}
+                      </motion.p>
+                      {answer.points.length > 0 && (
+                        <ul className="exchange-points">
+                          {answer.points.map((point) => (
+                            <motion.li
+                              key={point}
+                              variants={{
+                                hidden: { opacity: 0, y: 6 },
+                                shown: { opacity: 1, y: 0 },
+                              }}
+                            >
+                              {point}
+                            </motion.li>
+                          ))}
+                        </ul>
                       )}
+                      <motion.div
+                        className="exchange-meta"
+                        variants={{ hidden: { opacity: 0 }, shown: { opacity: 1 } }}
+                      >
+                        {answer.sources.length > 0 && (
+                          <span className="exchange-sources">
+                            From: {answer.sources.join(' · ')}
+                          </span>
+                        )}
+                        {answer.action && (
+                          <button
+                            type="button"
+                            className="exchange-action"
+                            data-symbiote-target
+                            onClick={() => {
+                              onClose();
+                              navigate(`/#${answer.action!.overlay}`);
+                            }}
+                          >
+                            {answer.action.label} <FiArrowUpRight aria-hidden="true" />
+                          </button>
+                        )}
+                      </motion.div>
                     </motion.div>
-                  </motion.div>
+                  )}
                 </article>
               ))}
-              {thread.length > 0 && (
+              {thread.length > 0 && thread[thread.length - 1].answer && (
                 <div className="exchange-followups" aria-label="Follow-up questions">
-                  {thread[thread.length - 1].answer.followUps.map((prompt) => (
+                  {thread[thread.length - 1].answer!.followUps.map((prompt) => (
                     <button
                       key={prompt}
                       type="button"

@@ -173,6 +173,16 @@ Next phases complete the static content, PostgreSQL migrations and public data A
 - **Vercel:** `vercel.json` installs with `npm ci`, builds only the client (`npm run build --workspace @portfolio/client`), serves `client/dist/`, and rewrites unknown paths to `index.html` for client-side routing. Hashed assets are cached for a year.
 - The site is fully static: the chatbot runs in the browser and the contact form uses the visitor's email app, so no server is needed in production. The Express API (`server/`) can be hosted separately on Render or Railway later with `HOST=0.0.0.0` and `FRONTEND_ORIGIN` set to the Vercel URL.
 
+### Contact email (Resend)
+
+The contact form posts to `/api/contact`. On Vercel that is `client/api/contact.ts`; locally the Express API serves the same route. To turn on delivery:
+
+1. Create a free account at https://resend.com with **shahzaibkhalid.eng@gmail.com** and create an API key.
+2. In Vercel → Project → Settings → Environment Variables, add `RESEND_API_KEY` (and optionally `CONTACT_TO`), then redeploy.
+3. For local testing, put the same key in `server/.env`.
+
+Without a key, the form explains that sending isn't available and offers the visitor's email app instead. Resend's test sender (`onboarding@resend.dev`) only delivers to the Resend account's own address; verify a domain in Resend and set `CONTACT_FROM` to send from your own domain.
+
 ## References
 
 - [Vite setup](https://vite.dev/guide/)

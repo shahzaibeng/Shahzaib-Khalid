@@ -12,7 +12,6 @@ const order: AccountId[] = [
   'leetcode',
   'huggingface',
   'kaggle',
-  'x',
   'instagram',
   'email',
 ];

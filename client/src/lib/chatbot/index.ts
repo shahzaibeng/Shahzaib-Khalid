@@ -70,7 +70,7 @@ export function classify(question: string, previous?: string): Classification {
 }
 
 const unknownAnswer: Answer = {
-  summary: `I can only answer from what's on this portfolio, and I didn't find that here.`,
+  summary: `Hmm, that one's outside what I know — I only answer from Shahzaib's portfolio, and I didn't find that here.`,
   points: [
     'Try asking about his tech stack, a specific technology, projects, experience, availability, or how to get in touch.',
   ],

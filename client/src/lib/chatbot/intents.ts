@@ -53,7 +53,7 @@ const profiles = () =>
 const group = (title: string) => skillGroups.find((entry) => entry.title === title)?.skills ?? [];
 
 const notListed = (topic: string): Answer => ({
-  summary: `${topic} isn't on the portfolio yet, so I won't guess.`,
+  summary: `${topic} isn't something ${first} has shared on the portfolio yet, so I'd rather not guess.`,
   points: [
     isConfigured(site.email)
       ? `You can ask ${first} directly at ${site.email}.`
@@ -90,7 +90,7 @@ export const intents: Record<string, Intent> = {
       'salaam',
     ],
     respond: () => ({
-      summary: `Hello! I can answer questions about ${first}'s skills, projects, experience, and availability.`,
+      summary: `Hi there — I'm ${first}'s AI assistant. I can walk you through his Cloudtek work, the stack he builds with, his projects, and whether he's open to new roles. What would you like to know?`,
       points: [],
       sources: [],
       followUps: ['What is his tech stack?', 'Is he available for hire?', 'Show top AI projects'],
@@ -115,7 +115,7 @@ export const intents: Record<string, Intent> = {
       'that helped a lot',
     ],
     respond: () => ({
-      summary: `You're welcome. Anything else you'd like to know?`,
+      summary: `Anytime! If you'd like to talk to ${first} directly, the contact form goes straight to his inbox.`,
       points: [],
       sources: [],
       followUps: ['How can I contact him?', 'Show top AI projects'],
@@ -135,7 +135,7 @@ export const intents: Record<string, Intent> = {
       'catch you later',
     ],
     respond: () => ({
-      summary: `Thanks for stopping by. ${first} would be glad to hear from you.`,
+      summary: `Thanks for stopping by — ${first} would genuinely be glad to hear from you.`,
       points: isConfigured(site.email) ? [`Email: ${site.email}`] : [],
       sources: ['Contact'],
       action: { label: 'Open Contact', overlay: 'contact' },
@@ -162,7 +162,7 @@ export const intents: Record<string, Intent> = {
       'how does this chatbot work',
     ],
     respond: () => ({
-      summary: `I'm a small assistant built into this portfolio. I run entirely in your browser — no external AI service — and I answer only from the portfolio's own content.`,
+      summary: `I'm ${first}'s personal AI assistant, built right into this portfolio. I run entirely in your browser — no external AI service — so everything I tell you comes straight from his portfolio and resume.`,
       points: [
         'I was trained on example questions for about thirty topics, and I match yours to the closest one.',
         `Ask about ${first}'s skills, a specific technology, projects, experience, availability, or how to get in touch.`,
@@ -193,7 +193,7 @@ export const intents: Record<string, Intent> = {
       'what does he do for work',
     ],
     respond: () => ({
-      summary: `${site.name} is a ${site.title} — ${lower(site.tagline)}`,
+      summary: `${site.name} is a ${site.title}${experience[0] ? ` at ${experience[0].company}` : ''} in ${site.location}. He builds LLM-powered agents and the full-stack products around them — from the React interface down to the database.`,
       points: [
         ...[site.bio].filter(isConfigured),
         ...aboutContent.paragraphs,
@@ -224,7 +224,7 @@ export const intents: Record<string, Intent> = {
       'his job title',
     ],
     respond: () => ({
-      summary: `${first} is a ${site.title}: he works across frontend, backend, and AI.`,
+      summary: `${first} is a ${site.title}. In practice that means he owns features end to end: the React interface, the FastAPI or Node.js service behind it, and the LLM layer that makes it smart.`,
       points: aboutContent.focus.map((item) => `${item}.`),
       sources: ['Architecture'],
       action: { label: 'Open Architecture', overlay: 'about' },
@@ -252,7 +252,7 @@ export const intents: Record<string, Intent> = {
       'toolkit',
     ],
     respond: () => ({
-      summary: `${first} works across the full stack, with a focus on ${list(availability.stack)}.`,
+      summary: `${first} works across the whole stack — Python and FastAPI on the backend, React and Tailwind CSS up front, PostgreSQL underneath, and LLM agents tying it together. Here's the full toolkit:`,
       points: skillGroups.map((entry) => `${entry.title}: ${entry.skills.join(', ')}`),
       sources: ['Skills', 'Status'],
       action: { label: 'Open Skills', overlay: 'skills' },
@@ -296,7 +296,7 @@ export const intents: Record<string, Intent> = {
       const points = known.map((skill) => `${skill.name} — listed under ${skill.group}.`);
       for (const term of unknown) points.push(`${term} isn't listed.`);
       return {
-        summary: `Yes — ${list(known.map((skill) => skill.name))} ${known.length > 1 ? 'are' : 'is'} part of ${first}'s stack.`,
+        summary: `Yes — ${list(known.map((skill) => skill.name))} ${known.length > 1 ? 'are' : 'is'} part of ${first}'s stack. Here's where it fits:`,
         points,
         sources: ['Skills'],
         action: { label: 'Open Skills', overlay: 'skills' },
@@ -320,7 +320,7 @@ export const intents: Record<string, Intent> = {
       'responsive design',
     ],
     respond: () => ({
-      summary: `On the frontend, ${first} works with ${list(group('Frontend'))}.`,
+      summary: `On the frontend, ${first} builds responsive interfaces with ${list(group('Frontend'))}, wired straight into the APIs he writes.`,
       points: [
         'This portfolio itself is an example: React and TypeScript, with an accessible, responsive layout and light and dark themes.',
       ],
@@ -349,7 +349,7 @@ export const intents: Record<string, Intent> = {
       'backend tools he uses',
     ],
     respond: () => ({
-      summary: `On the backend, ${first} works with ${list(group('Backend'))}, on ${list(group('Databases'))}.`,
+      summary: `Backend is where a lot of ${first}'s Cloudtek work lives: services in ${list(group('Backend'))}, backed by ${list(group('Databases'))}. A few examples:`,
       points: highlights(/backend|API|schema|NoSQL|\.NET/i),
       sources: ['Skills'],
       action: { label: 'Open Skills', overlay: 'skills' },
@@ -376,7 +376,7 @@ export const intents: Record<string, Intent> = {
       'deep learning',
     ],
     respond: () => ({
-      summary: `${first}'s AI work centres on ${list(group('AI & LLMs'))}.`,
+      summary: `AI is at the heart of ${first}'s work. He builds with ${list(group('AI & LLMs'))} — here's what that looks like in practice:`,
       points: highlights(/LLM|AI agents|scraper/i),
       sources: ['Experience', 'Skills'],
       action: { label: 'Open Systems', overlay: 'projects' },
@@ -401,7 +401,7 @@ export const intents: Record<string, Intent> = {
       'version control',
     ],
     respond: () => ({
-      summary: `For shipping and collaboration, ${first} uses ${list(group('DevOps & Tools'))}.`,
+      summary: `To ship reliably, ${first} containerizes with Docker and works through Git and GitHub — branches, pull requests and code reviews.`,
       points: [
         'This portfolio runs linting, type checks, formatting, API tests, and browser checks before every build.',
       ],
@@ -443,7 +443,7 @@ export const intents: Record<string, Intent> = {
       return {
         summary:
           projects.length === 1
-            ? 'The portfolio currently lists one project; more, including AI work, are being added.'
+            ? 'Right now the portfolio features one project in detail — this site itself — and more of his AI work is on the way.'
             : `Here are ${first}'s listed projects, AI work first.`,
         points: ranked.map((project) => `${project.title} (${project.status}): ${project.summary}`),
         sources: ['Systems'],
@@ -469,7 +469,7 @@ export const intents: Record<string, Intent> = {
       'what is this site built on',
     ],
     respond: () => ({
-      summary: `${first} built this portfolio with React, TypeScript, and Vite, with an Express API behind it.`,
+      summary: `${first} built this portfolio himself with React, TypeScript, and Vite, with an Express API behind it — and yes, that includes me.`,
       points: [
         'Canvas effects and Framer Motion for the interactions, and Tailwind CSS for styling.',
         'This assistant runs in the browser: a small intent model trained on example questions, answering only from the site content.',
@@ -502,7 +502,7 @@ export const intents: Record<string, Intent> = {
       const current = experience[0];
       return {
         summary: current
-          ? `${first} has ${yearsOfExperience} years of experience and is currently ${current.title} at ${current.company} (${current.start} – ${current.end}).`
+          ? `${first} has ${yearsOfExperience} years of experience and is currently ${current.title} at ${current.company} (${current.start} – ${current.end}). A few highlights from that role:`
           : `${first} is a ${lower(site.title)}.`,
         points: current ? current.highlights.slice(0, 6) : [],
         sources: ['Experience'],
@@ -530,7 +530,7 @@ export const intents: Record<string, Intent> = {
     respond: () =>
       education.length > 0
         ? {
-            summary: `${first} is studying for a ${education[0].degree} at ${education[0].school} (${education[0].period}).`,
+            summary: `${first} is studying for a ${education[0].degree} at ${education[0].school} (${education[0].period}), alongside his engineering work.`,
             points: [`Location: ${education[0].location}.`],
             sources: ['Experience'],
             action: { label: 'Open Experience', overlay: 'experience' },
@@ -554,7 +554,7 @@ export const intents: Record<string, Intent> = {
     respond: () => ({
       summary:
         credentials.length > 0
-          ? `${first} holds ${credentials.length} credential${credentials.length === 1 ? '' : 's'}, each with a verification link.`
+          ? `${first} holds ${credentials.length} credential${credentials.length === 1 ? '' : 's'} from ${list([...new Set(credentials.map((item) => item.issuer))])}. Use “Verify Credential” on the Credentials page to request verification details.`
           : 'Certifications are being added to the portfolio, each with a link to verify it with the issuer.',
       points: credentials.map((item) => `${item.title} — ${item.issuer}, ${item.issued}`),
       sources: ['Credentials'],
@@ -586,7 +586,7 @@ export const intents: Record<string, Intent> = {
     ],
     respond: () => ({
       summary: site.availableForWork
-        ? `Yes — ${first} is ${lower(availability.status)}.`
+        ? `Yes — ${first} is ${lower(availability.status)}. Here are the details:`
         : `${first} isn't taking new work at the moment.`,
       points: [
         `Notice period: ${availability.notice}.`,
@@ -684,7 +684,7 @@ export const intents: Record<string, Intent> = {
     ],
     respond: () => ({
       summary: isConfigured(site.email)
-        ? `The quickest way is email: ${site.email}.`
+        ? `The quickest way is email: ${site.email} — or use the contact form, which lands straight in his inbox.`
         : 'Use the contact form or one of the profiles below.',
       points: profiles().map((account) => `${account.label}: ${account.href}`),
       sources: ['Contact', 'Profiles'],
@@ -880,7 +880,7 @@ export const intents: Record<string, Intent> = {
       'home address',
     ],
     respond: () => ({
-      summary: `I keep to ${first}'s professional profile, so I can't share personal details.`,
+      summary: `I keep to ${first}'s professional profile, so I'll leave personal details to him.`,
       points: [],
       sources: [],
       followUps: ['What is his experience?', 'Is he available for hire?'],

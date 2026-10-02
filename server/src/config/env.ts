@@ -21,6 +21,13 @@ const schema = z.object({
     }, 'Use a frontend origin without a path, query, or credentials.')
     .default('http://127.0.0.1:5173')
     .transform((value) => new URL(value).origin),
+  RESEND_API_KEY: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => value || undefined),
+  CONTACT_TO: z.email().default('shahzaibkhalid.eng@gmail.com'),
+  CONTACT_FROM: z.string().min(3).default('Portfolio <onboarding@resend.dev>'),
   DATABASE_URL: z
     .string()
     .trim()

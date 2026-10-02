@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import type { ServerConfig } from './config/env.js';
 import { AppError } from './lib/AppError.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { contactRouter } from './routes/contact.js';
 
 export function createApp(config: ServerConfig) {
   const app = express();
@@ -36,6 +37,7 @@ export function createApp(config: ServerConfig) {
       },
     });
   });
+  app.use(contactRouter(config));
   app.use((_request, _response, next) => next(new AppError(404, 'NOT_FOUND', 'Route not found.')));
   app.use(errorHandler);
   return app;

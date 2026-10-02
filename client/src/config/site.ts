@@ -11,7 +11,7 @@ export const site = {
   availableForWork: true,
   resume: {
     href: '/resume.pdf',
-    available: false, // Add client/public/resume.pdf, then change this to true.
+    available: true,
   },
   // Shown in the navbar as "01. // ARCHITECTURE" and so on; each id is a section on the page.
   navigation: [
@@ -23,7 +23,7 @@ export const site = {
   ],
 } as const;
 
-// Replace the bracketed values to activate these links throughout the site.
+// Profiles shown in the footer, the left dock, and the contact section.
 export const accounts = [
   { id: 'github', label: 'GitHub', href: 'https://github.com/shahzaibeng' },
   {
@@ -31,13 +31,9 @@ export const accounts = [
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/shahzaib-khalid-603556285',
   },
-  { id: 'x', label: 'X', href: 'https://x.com/[username]' },
   { id: 'leetcode', label: 'LeetCode', href: 'https://leetcode.com/u/shahzaibeng/' },
   { id: 'kaggle', label: 'Kaggle', href: 'https://www.kaggle.com/shahzaibeng' },
   { id: 'huggingface', label: 'Hugging Face', href: 'https://huggingface.co/shahzaibeng' },
-  { id: 'orcid', label: 'ORCID', href: 'https://orcid.org/[0000-0000-0000-0000]' },
-  { id: 'pypi', label: 'PyPI', href: 'https://pypi.org/user/[username]' },
-  { id: 'hashnode', label: 'Hashnode', href: 'https://[username].hashnode.dev' },
   { id: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/shahzai_b_khalid/' },
   { id: 'email', label: 'Email', href: `mailto:${site.email}` },
 ] as const;

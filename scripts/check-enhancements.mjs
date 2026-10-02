@@ -67,6 +67,10 @@ try {
     await page.getByRole('button', { name: 'Is he available for hire?', exact: true }).click();
     const drawer = page.getByRole('dialog', { name: 'Ask about Shahzaib' });
     await drawer.waitFor();
+    // It thinks first: a status line and the orb, then the answer after 1.5–2.5 s.
+    await drawer.getByText('Analyzing query context...').waitFor();
+    assert.equal(await drawer.locator('canvas.thinking-orb').count(), 1);
+    await drawer.getByText("Searching Shahzaib's knowledge base...").waitFor();
     await drawer.getByText('Notice period: Immediate Start.').waitFor();
     assert.match(await drawer.textContent(), /From: Status/);
     await page.locator('#drawer-input').fill('what is his tech stack');
@@ -155,12 +159,49 @@ try {
     },
   );
 
+  await check(
+    'Verify Credential opens Contact with a drafted message and focuses the name',
+    async () => {
+      await page.goto(origin + '/#credentials');
+      await page
+        .getByRole('button', { name: /Verify Credential/ })
+        .first()
+        .click();
+      await page.getByRole('dialog', { name: 'Contact' }).waitFor();
+      await page.waitForFunction(() => document.activeElement?.id === 'contact-name');
+      assert.match(
+        await page.locator('#contact-message').inputValue(),
+        /^Hi Shahzaib, I came across your portfolio.*Cloudtek 2025\/2026/,
+      );
+    },
+  );
+
+  await check(
+    'the contact form validates and reports delivery problems with a fallback',
+    async () => {
+      await page.getByRole('button', { name: 'Send message' }).click();
+      await page.getByText('Please enter your name.').waitFor();
+      await page.getByText('Please enter a valid email address.').waitFor();
+      await page.locator('#contact-name').fill('Ada Recruiter');
+      await page.locator('#contact-email').fill('ada@example.com');
+      await page.getByRole('button', { name: 'Send message' }).click();
+      // The local API has no Resend key, so delivery is unavailable and the email app is offered.
+      await page.getByText('Send it from your email app instead').waitFor();
+      assert.match(
+        (await page.getByText('Send it from your email app instead').getAttribute('href')) ?? '',
+        /^mailto:shahzaibkhalid\.eng@gmail\.com/,
+      );
+      // That 503 is the expected "not configured" answer, not a page error.
+      errors.splice(0, errors.length, ...errors.filter((text) => !/status of 503/.test(text)));
+    },
+  );
+
   await check('each section page has its own theme', async () => {
     const themes = {
       about: ['pyramids', '.pyramids-art'],
       skills: ['space', '.space-art'],
       projects: ['mars', '.mars-art'],
-      credentials: ['dimension', '.dimension-art'],
+      credentials: ['aladdin', '.aladdin-art'],
       status: ['desert', '.desert-art'],
     };
     for (const [hash, [theme, art]] of Object.entries(themes)) {
@@ -169,14 +210,18 @@ try {
       assert.equal(await page.locator('.section-overlay').getAttribute('data-theme'), theme, hash);
     }
     assert.notEqual((await animationState(page, '.desert-sun')).name, 'none');
-    // The tesseract is redrawn every frame from its 4D rotation.
+    // Credentials: the verifier hashes a record and the graph shows the GitHub calendar.
     await page.goto(origin + '/#credentials');
-    const edge = page.locator('.tesseract-edge').first();
-    await edge.waitFor({ state: 'attached' });
-    assert.equal(await page.locator('.tesseract-edge').count(), 32);
-    const before = await edge.getAttribute('x1');
-    await page.waitForTimeout(300);
-    assert.notEqual(await edge.getAttribute('x1'), before, 'The tesseract must rotate.');
+    await page.locator('#terminal-input').fill('verify cloudtek-fsai');
+    await page.keyboard.press('Enter');
+    await page.getByText(/sha256 {5}[0-9a-f]{64}/).waitFor();
+    assert.ok((await page.locator('.gh-day[data-level]').count()) > 300);
+    await page.locator('#terminal-input').fill('github');
+    await page.keyboard.press('Enter');
+    await page
+      .getByText(/contributions$/)
+      .first()
+      .waitFor();
   });
 
   await check('the hero particle network moves and reacts to the pointer', async () => {
@@ -301,7 +346,7 @@ try {
 
   await check('the left dock lists profiles with tooltips', async () => {
     const dock = page.getByRole('navigation', { name: 'Profiles' });
-    assert.equal(await dock.locator('li').count(), 7);
+    assert.equal(await dock.locator('li').count(), 8);
     const first = dock.locator('.dock-link').first();
     await first.hover();
     await page.waitForTimeout(300);

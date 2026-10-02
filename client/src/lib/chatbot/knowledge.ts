@@ -179,11 +179,6 @@ const platformWords: Record<string, AccountId> = {
   'hugging face': 'huggingface',
   instagram: 'instagram',
   insta: 'instagram',
-  twitter: 'x',
-  x: 'x',
-  hashnode: 'hashnode',
-  orcid: 'orcid',
-  pypi: 'pypi',
 };
 
 /** A social platform named in a question, if any. */

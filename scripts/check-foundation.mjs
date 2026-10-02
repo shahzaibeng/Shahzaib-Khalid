@@ -103,10 +103,10 @@ try {
     assert.equal(await page.getByRole('navigation', { name: 'Main navigation' }).count(), 1);
     await page.goto(origin + '/#about');
     await page.locator('footer ul[aria-label="Find me online"]').waitFor();
-    assert.equal(await page.locator('footer ul[aria-label="Find me online"] li').count(), 11);
+    assert.equal(await page.locator('footer ul[aria-label="Find me online"] li').count(), 7);
     await page.goto(origin);
     assert.equal(await page.locator('a[href*="["]').count(), 0);
-    assert.equal(await page.locator('a[href="/resume.pdf"]').count(), 0);
+    assert.ok((await page.locator('a[href="/resume.pdf"]').count()) > 0, 'Resume links are live.');
     await page.screenshot({
       path: path.join(artifacts, 'phase-1-desktop-light.png'),
       fullPage: true,

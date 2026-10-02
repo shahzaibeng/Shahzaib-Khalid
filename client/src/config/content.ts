@@ -23,20 +23,59 @@ export const availability = {
 export type CredentialCategory = 'ai' | 'cloud' | 'data' | 'dev';
 
 export interface Credential {
+  /** Short id used by the verifier terminal, e.g. `verify cloudtek-fsai`. */
+  id: string;
   title: string;
   issuer: string;
-  /** e.g. 'Mar 2026' */
   issued: string;
   category: CredentialCategory;
-  /** Public verification URL from the issuer. */
+  focus: readonly string[];
+  /** Public verification URL from the issuer; leave empty until one exists. */
   verifyUrl: string;
   credentialId?: string;
 }
 
-// "03. // CREDENTIALS" section. Add your real certifications here, newest first.
-// While this list is empty, the local dev server shows labelled sample cards for layout only;
-// the published site shows a short "being added" note instead.
-export const credentials: readonly Credential[] = [];
+// "04 Credentials". Add the issuer's verification link to each when it is available.
+export const credentials: readonly Credential[] = [
+  {
+    id: 'cloudtek-fsai',
+    title: 'Certified Full Stack & AI Engineer',
+    issuer: 'Cloudtek',
+    issued: '2025',
+    category: 'ai',
+    focus: ['Production web apps', 'LLM agent workflows', 'FastAPI', 'React', 'Vector DBs'],
+    verifyUrl: '',
+  },
+  {
+    id: 'cloudtek-pse',
+    title: 'Professional Software Engineer',
+    issuer: 'Cloudtek',
+    issued: '2026',
+    category: 'dev',
+    focus: ['System architecture', 'High-throughput APIs', 'Relational schemas', 'Docker', 'CI/CD'],
+    verifyUrl: '',
+  },
+];
+
+// Drafted into the contact form when a visitor presses "Verify Credential".
+export const verifyRequestMessage =
+  "Hi Shahzaib, I came across your portfolio and reviewed your verified certifications (Cloudtek 2025/2026). I'm interested in discussing your experience and proceeding further with an opportunity. Could you share the verification details?";
+
+// Engineering milestones shown under the credentials.
+export const milestones = [
+  {
+    title: 'Code Quality & Reliability',
+    detail:
+      'High test coverage suites, robust REST API architectures, error-handling middleware, and end-to-end integration testing.',
+    tags: ['Vitest', 'Playwright', 'FastAPI', 'Error handling'],
+  },
+  {
+    title: 'Open-Source & Local AI Contributions',
+    detail:
+      'Community developer tools, performance benchmarks for local LLMs across the Ollama and Hugging Face ecosystem, and optimized scraping pipelines.',
+    tags: ['Ollama', 'Hugging Face', 'Python', 'Web scraping'],
+  },
+] as const;
 
 // The hero proof bar. Numeric values count up on load; keep them accurate to your work.
 export const heroMetrics = [
